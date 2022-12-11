@@ -1,5 +1,8 @@
 # femtograd
 
+This repo is a learning exercise for me to get a deeper understanding on neural network inner mechanisms.
+Basically I take Andrej Karpathy [micrograd](https://github.com/karpathy/micrograd) and added just some extra function in order to train the neural network with just a bunch of lines of code.
+
 ## DenseNN initialization
 
 To create a neural network in **femtograd** you have to call a **DenseNN** object. You have to specify the following parameters:
