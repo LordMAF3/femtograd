@@ -1,4 +1,3 @@
-#import random
 from math import tanh, exp, log
 from graphviz import Digraph
 
@@ -60,6 +59,16 @@ class Value:
         out._backward = _backward
         return out
 
+    def exp(self):
+        x = exp(self.data)
+        out = Value(x, (self, ), 'exp')
+        
+        def _backward():
+            self.grad = x * out.grad
+        
+        out._backward = _backward
+        return out
+
     def relu(self):
         out = Value(0 if self.data < 0 else self.data, (self,), 'ReLU')
         
@@ -87,7 +96,7 @@ class Value:
             self.grad += (x-x**2) * out.grad
             
         out._backward = _backward
-        return out
+        return out  
     
     def MeanSquaredError(self, pred):
         x = 0.5*(self.data - pred)**2
@@ -102,11 +111,25 @@ class Value:
     def BinaryCrossEntropy(self, pred):
         y_hat = self.data
     
-        x = -pred * log(abs(y_hat)) - (1-pred) * log(abs(1-y_hat))
+        x = -pred * log(y_hat) - (1-pred) * log(1-y_hat)
         out = Value(x, (self, ), 'BCE')
         
         def _backward():
-            self.grad += -(pred/(y_hat)) + (1-pred)/(1-y_hat)
+            self.grad += (-(pred/y_hat) + (1-pred)/(1-y_hat)) * out.grad
+        
+        out._backward = _backward
+        return out
+    
+    def CategoricalCrossEntropy(self, others, pred):
+        x = pred[0] * log(self.data)
+        for i in range(len(others)):
+            x += pred[i+1] * log(others[i].data)
+        out = Value(x, (self,) + others, 'CCE')
+        
+        def _backward():
+            self.grad += pred[0] * self.data * out.grad
+            for i in range(len(others)):
+                others[i].grad += pred[i] * others[i].data * out.grad
         
         out._backward = _backward
         return out
@@ -183,4 +206,27 @@ class Value:
             dot.edge(str(id(n1)), str(id(n2)) + n2._op)
         
         dot.view()
- 
+
+def softmax(neurons):
+    sum = 0
+    for n in neurons:
+        sum = sum + n.exp()
+    
+    out = []
+    for n in neurons:
+        n = n.exp()/sum
+        out.append(n)        
+    return out 
+
+def CategoricalCrossEntropy(neurons, pred):
+        x = 0
+        for i in range(len(neurons)):
+            x += - pred[i] * log(neurons[i].data)
+        out = Value(x, neurons, 'CCE')
+        
+        def _backward():
+            for i in range(len(neurons)):
+                neurons[i].grad += (neurons[i].data - pred[i]) * out.grad
+        
+        out._backward = _backward
+        return out
