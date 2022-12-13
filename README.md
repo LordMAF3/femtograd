@@ -49,7 +49,7 @@ After initializing the neural network, essentially you have to use only 2 other 
 
   * *decay_rate*: a float specifying the decay rate for learning rate decay (```learning_rate = learning_rate/(1 + decay_rate * epoch)```). By default is set to 0, so no learning rate decay is done without setting this parameter. Note that high ```learning_rate_decay``` makes learning rate decays faster.
   
-  * *L2_regularization*: a float specifying the regularization factor for L2 regularization (loss = loss + L2_regularization * sum(weights^2)). Note that by default L2_regularization is set to 0 so no regularization is done.
+  * *L2_regularization*: a float specifying the regularization factor for L2 regularization (loss = loss + L2_regularization * sum(weights^2)). Note that by default ```L2_regularization``` is set to ```0``` so no regularization is done.
 * *nn.Train()* gives as output: a **DenseNN** object
 
 * *nn.Predict()* takes as inputs:
