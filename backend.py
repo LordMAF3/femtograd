@@ -1,5 +1,5 @@
-from engine import Value
-from engine import CategoricalCrossEntropy, softmax
+from milligrad.engine import Value
+from milligrad.engine import CategoricalCrossEntropy, softmax
 import random
 
 class Module:
@@ -14,7 +14,7 @@ class Module:
 class Neuron(Module):
 
     def __init__(self, nin, nonlin):
-        self.w = [Value(random.gauss(0, 1/nin), label = 'weight') for _ in range(nin)] #Xavier initialization
+        self.w = [Value(random.gauss(0, 1/nin**0.5), label = 'weight') for _ in range(nin)] #Xavier initialization
         self.b = Value(0, label = 'bias')
         self.nonlin = nonlin
 
